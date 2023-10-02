@@ -21,12 +21,23 @@ public class PastebinTest {
 
     @Test
     public void testCreateNewPaste() throws InterruptedException {
+        String code = "git config --global user.name  \"New Sheriff in Town\"\n" +
+                "git reset $(git commit-tree HEAD^{tree} -m \"Legacy code\")\n" +
+                "git push origin master --force";
+        String pasteName = "how to gain dominance among developers";
+
         pastebinPage.openPage("https://pastebin.com/")
                 .clickAgreeBlockerButton()
-                .enterCode("Hello from WebDriver")
-                .setExpirationToTenMinutes()
-                .setPasteName("helloweb");
-        Thread.sleep(5000);
+                .enterCode(code)
+                .setDropdownOption("Syntax Highlighting", "Bash")
+                .setDropdownOption("Paste Expiration", "10 Minutes")
+                .setPasteName(pasteName)
+                .clickSavePaste();
+
+        SavedPastePage savedPastePage = new SavedPastePage(driver);
+        savedPastePage.checkPageTitle(pasteName)
+                .checkTopButtonText("Bash")
+                .checkCodeText(code);
     }
 
     @AfterEach
